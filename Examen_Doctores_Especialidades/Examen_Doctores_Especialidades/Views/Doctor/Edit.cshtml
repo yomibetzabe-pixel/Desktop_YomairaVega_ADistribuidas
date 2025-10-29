@@ -1,0 +1,87 @@
+﻿@model Examen_Doctores_Especialidades.Models.Doctor
+@{
+    ViewData["Title"] = "Editar Doctor";
+}
+
+<h2>Editar Doctor</h2>
+
+<form id="formEdit" class="p-3 border rounded bg-light">
+    <input type="hidden" id="idDoctor" value="@Model.IdDoctor" />
+
+    <div class="mb-3">
+        <label class="form-label">Nombre:</label>
+        <input type="text" name="nombreDoctor" class="form-control" value="@Model.NombreDoctor" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Apellidos:</label>
+        <input type="text" name="apellidosDoctor" class="form-control" value="@Model.ApellidosDoctor" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email:</label>
+        <input type="email" name="emailDoctor" class="form-control" value="@Model.EmailDoctor" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Edad:</label>
+        <input type="number" name="edadDoctor" class="form-control" value="@Model.EdadDoctor" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Estado:</label>
+        <select name="estadoDoctor" class="form-control" required>
+            <option value="Activo" @(Model.EstadoDoctor == "Activo" ? "selected" : "")>Activo</option>
+            <option value="Inactivo" @(Model.EstadoDoctor == "Inactivo" ? "selected" : "")>Inactivo</option>
+            <option value="Guardia" @(Model.EstadoDoctor == "Guardia" ? "selected" : "")>Guardia</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Especialidad:</label>
+        <select name="idEspecialidad" id="especialidadSelect" class="form-control" required>
+            @foreach (var esp in ViewBag.Especialidades)
+            {
+                <option value="@esp.IdEspecialidad" @(esp.IdEspecialidad == Model.FkIdEspecialidad?.IdEspecialidad ? "selected" : "")>
+                    @esp.NombreEspecialidad
+                </option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $("#formEdit").submit(function (e) {
+        e.preventDefault();
+
+        const doctor = {
+            idDoctor: parseInt($("#idDoctor").val()),
+            nombreDoctor: $("input[name='nombreDoctor']").val(),
+            apellidosDoctor: $("input[name='apellidosDoctor']").val(),
+            emailDoctor: $("input[name='emailDoctor']").val(),
+            edadDoctor: parseInt($("input[name='edadDoctor']").val()),
+            estadoDoctor: $("select[name='estadoDoctor']").val(),
+            fkIdEspecialidad: {
+                idEspecialidad: parseInt($("#especialidadSelect").val())
+            }
+        };
+
+        $.ajax({
+            url: "/Doctor/EditDoctor",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(doctor),
+            success: function () {
+                alert("Doctor actualizado correctamente");
+                window.location.href = "/Doctor/Index";
+            },
+            error: function () {
+                alert("Error al actualizar el doctor");
+            }
+        });
+    });
+</script>

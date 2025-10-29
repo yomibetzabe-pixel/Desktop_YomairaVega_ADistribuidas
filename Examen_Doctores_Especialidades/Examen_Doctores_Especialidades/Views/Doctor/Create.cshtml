@@ -1,0 +1,97 @@
+﻿@model List<Examen_Doctores_Especialidades.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Registrar Doctor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center text-success mb-4">Registrar Nuevo Doctor</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form id="formCreate">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre:</label>
+                    <input type="text" name="nombreDoctor" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Apellidos:</label>
+                    <input type="text" name="apellidosDoctor" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Email:</label>
+                    <input type="email" name="emailDoctor" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Edad:</label>
+                    <input type="number" name="edadDoctor" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado:</label>
+                    <select name="estadoDoctor" class="form-select" required>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Especialidad:</label>
+                <select name="idEspecialidad" id="especialidadSelect" class="form-select" required>
+                    <option value="">-- Selecciona una especialidad --</option>
+                    @foreach (var esp in ViewBag.Especialidades)
+                    {
+                        <option value="@esp.IdEspecialidad">@esp.NombreEspecialidad</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="/Doctor/Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- jQuery para AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $("#formCreate").submit(function (e) {
+        e.preventDefault();
+
+        const doctor = {
+            nombreDoctor: $("input[name='nombreDoctor']").val(),
+            apellidosDoctor: $("input[name='apellidosDoctor']").val(),
+            emailDoctor: $("input[name='emailDoctor']").val(),
+            edadDoctor: parseInt($("input[name='edadDoctor']").val()),
+            estadoDoctor: $("select[name='estadoDoctor']").val(),
+            fkIdEspecialidad: {
+                idEspecialidad: parseInt($("#especialidadSelect").val())
+            }
+        };
+
+        $.ajax({
+            url: "/Doctor/CreateDoctor",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(doctor),
+            success: function () {
+                alert("Doctor registrado correctamente");
+                window.location.href = "/Doctor/Index";
+            },
+            error: function () {
+                alert("Error al registrar el doctor");
+            }
+        });
+    });
+</script>
